@@ -30,10 +30,12 @@ contract Storage {
     }
 
     /** @notice User address => User struct */
-    mapping(address => User) public owners;
+    mapping(address => User) private owners;
 
     event Store(address _contract, uint256[] _id, address _staker);
     event Withdraw(address _contract, uint256[] _id, address _unstaker);
+
+    constructor() {}
 
     /**
      * @notice External function that wraps internal _store for code clarity.
@@ -99,4 +101,19 @@ contract Storage {
         uint256 _id,
         address _user
     ) internal {}
+
+    function getUser(address _contract, address _user, uint256 _id) public view returns (
+        uint256[] memory,
+        uint256,
+        uint256
+    ) {
+        // forced to use storage caz of nested mapping
+        User storage user = owners[_user];
+
+        return (
+            user.storedTokens[_contract],
+            user.timestamps[_contract][_id],
+            user.amountStored
+        );
+    }
 }
