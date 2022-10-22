@@ -29,7 +29,7 @@ contract Storage {
         uint256 amountStored;
     }
 
-    /** @notice Two way mapping to track User info. */
+    /** @notice User address => User struct */
     mapping(address => User) public owners;
 
     event Store(address _contract, uint256[] _id, address _staker);
@@ -85,12 +85,11 @@ contract Storage {
     ) internal {
         User storage user = owners[_user];
 
-        IERC721(_contract).trasferFrom(_user, address(this), _id);
+        IERC721(_contract).transferFrom(_user, address(this), _id);
 
         user.amountStored += 1;
         user.timestamps[_contract][_id] = block.timestamp;
         user.storedTokens[_contract].push(_id);
-        owners[_contract][_id] = _user;
     }
 
     // TEST STOP //
