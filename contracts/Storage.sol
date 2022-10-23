@@ -109,7 +109,7 @@ contract Storage {
     ) {
         // forced to use storage caz of nested mapping
         User storage user = owners[_user];
-
+    
         return (
             user.storedTokens[_contract],
             user.timestamps[_contract][_id],

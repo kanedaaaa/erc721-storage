@@ -3,6 +3,13 @@
     "@openzeppelin/contracts": "^4.7.3",
     "hardhat": "^2.11.2"
   },
+
+  "scripts" : {
+    "compile" : "hardhat compile",
+    "test" : "hardhat test",
+    "dev" : "hardhat compile && hardhat test"
+  },
+
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
     "@ethersproject/providers": "^5.4.7",
