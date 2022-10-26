@@ -1,6 +1,8 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
+import { SameContractTwoUsers } from "./Helpers";
+
 describe("Happy Path", () => {
   const deploy = async () => {
     const Storage = await ethers.getContractFactory("Storage");
@@ -20,7 +22,7 @@ describe("Happy Path", () => {
     return { storage, token, token2, owner, user, user2 };
   }
 
-  it("Store: single token", async () => {
+  it("Store: Single token, Same contract", async () => {
     const { storage, token, owner, user } = await deploy(); 
 
     await token.connect(owner).mint(10, user.address);
@@ -34,7 +36,7 @@ describe("Happy Path", () => {
     expect(Number(info[2])).to.equal(1);
   });
 
-  it("Store: Multiple tokens", async () => {
+  it("Store: Multiple tokens, Same contract", async () => {
     const { storage, token, owner, user } = await deploy(); 
 
     await token.connect(owner).mint(10, user.address);
@@ -48,17 +50,10 @@ describe("Happy Path", () => {
     expect(Number(info[2])).to.equal(4);
   });
 
-  it("Store: Single token, Multiple users", async () => {
-    const { storage, token, token2, owner, user, user2 } = await deploy(); 
-    
-    await token.connect(owner).mint(5, user.address);
-    await token.connect(user).setApprovalForAll(storage.address, true);
+  it("Store: Single token, Multiple users, Same contract", async () => {
+    const { storage, token, owner, user, user2 } = await deploy(); 
 
-    await token.connect(owner).mint(10, user2.address);
-    await token.connect(user2).setApprovalForAll(storage.address, true);
-
-    await storage.connect(user).store(token.address, [4]);
-    await storage.connect(user2).store(token.address, [8]);
+    await SameContractTwoUsers(storage, token, owner, user, user2, [4], [8], 5, 10);
 
     const userInfo = await storage.getUser(token.address, user.address, 0);
     const user2Info = await storage.getUser(token.address, user2.address, 0);
@@ -66,4 +61,19 @@ describe("Happy Path", () => {
     expect(Number(userInfo[0])).to.equal(4);
     expect(Number(user2Info[0])).to.equal(8);
   });
+
+  it("Store: Multiple tokens, Multiple users, Same contract", async () => {
+    const { storage, token, owner, user, user2 } = await deploy(); 
+
+    await SameContractTwoUsers(storage, token, owner, user, user2, [0, 1], [3, 4], 2, 4);
+
+    const userInfo = await storage.getUser(token.address, user.address, 0);
+    const user2Info = await storage.getUser(token.address, user2.address, 0);
+
+    expect(Number(userInfo[0][0])).to.equal(0);
+    expect(Number(userInfo[0][1])).to.equal(1);
+
+    expect(Number(user2Info[0][0])).to.equal(3);
+    expect(Number(user2Info[0][1])).to.equal(4);
+  })
 });
