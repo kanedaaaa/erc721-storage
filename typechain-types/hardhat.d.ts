@@ -49,6 +49,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
+      name: "Array_Test",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Array_Test__factory>;
+    getContractFactory(
       name: "Mock",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Mock__factory>;
@@ -102,6 +106,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "Array_Test",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Array_Test>;
     getContractAt(
       name: "Mock",
       address: string,
