@@ -25,6 +25,7 @@ contract Storage {
      */
     struct User {
         mapping(address => uint256[]) storedTokens;
+        mapping(address => mapping(uint256 => bool)) isStored;
         mapping(address => mapping(uint256 => uint256)) timestamps;
         uint256 amountStored;
     }
@@ -73,12 +74,8 @@ contract Storage {
 
     /**
      * @notice Store tokens in contract.
-     * @param _user: msg.sender.
      *
-     * See {store()} for other params.
-     *
-     * With IERC721 `transferFrom`, Contract will request msg.sender's
-     * token ID's, Then increment User info accordingly.
+     * See {store()} for params.
      */
     function _store(
         address _contract,
@@ -92,15 +89,37 @@ contract Storage {
         user.amountStored += 1;
         user.timestamps[_contract][_id] = block.timestamp;
         user.storedTokens[_contract].push(_id);
+        user.isStored[_contract][_id] = true;
     }
 
     // TEST STOP //
 
+    /**
+     * @notice Withdraw tokens from contract
+     * 
+     * See {store()} for params.
+    */
     function _withdraw(
         address _contract,
         uint256 _id,
         address _user
-    ) internal {}
+    ) internal {
+        User storage user = owners[_user];
+
+        require(user.isStored[_contract][_id], "withdraw._withdraw: ERROR, User doesn't owns the given token");
+        
+        user.isStored[_contract][_id] = false;
+        user.storedTokens[_contract].removeElement(_id);
+        //user.timestamps[_contract][_id] = block.timestamp;
+        user.amountStored = 0;
+
+        if (user.amountStored == 0) {
+            // clean up nested mappings first
+            // then delete the struct
+        }
+
+        IERC721(_contract).transferFrom(address(this), _user, _id);
+    }
 
     function getUser(address _contract, address _user, uint256 _id) public view returns (
         uint256[] memory,

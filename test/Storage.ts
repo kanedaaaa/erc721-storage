@@ -22,7 +22,7 @@ describe("Happy Path", () => {
     return { storage, token, token2, owner, user, user2 };
   }
 
-  it("Store: Single token, Same contract", async () => {
+  it("Store: Single token, Single user, Same contract", async () => {
     const { storage, token, owner, user } = await deploy(); 
 
     await token.connect(owner).mint(10, user.address);
@@ -36,7 +36,7 @@ describe("Happy Path", () => {
     expect(Number(info[2])).to.equal(1);
   });
 
-  it("Store: Multiple tokens, Same contract", async () => {
+  it("Store: Multiple tokens, Single user, Same contract", async () => {
     const { storage, token, owner, user } = await deploy(); 
 
     await token.connect(owner).mint(10, user.address);
@@ -75,5 +75,17 @@ describe("Happy Path", () => {
 
     expect(Number(user2Info[0][0])).to.equal(3);
     expect(Number(user2Info[0][1])).to.equal(4);
-  })
+  });
+
+  it("Store: Single token, Single user, Multiple contracts", async () => {
+  });
+
+  it("Store: Multiple token, Single user, Multiple contracts", async () => {
+  });
+
+  it("Store: Single token, Multiple users, Multiple contracts", async () => {
+  });
+
+  it("Store: Multiple token, Multiple users, Multiple contracts", async () => {
+  });
 });
