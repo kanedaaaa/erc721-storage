@@ -5,7 +5,15 @@ import { SameContractTwoUsers } from "./Helpers";
 
 describe("Happy Path", () => {
   const deploy = async () => {
-    const Storage = await ethers.getContractFactory("Storage");
+    const Array = await ethers.getContractFactory("Array");
+    const array = await Array.deploy();
+    await array.deployed();
+
+    const Storage = await ethers.getContractFactory("Storage", {
+      libraries: {
+        Array: array.address
+      }
+    });
     const storage = await Storage.deploy();
     await storage.deployed();
 
