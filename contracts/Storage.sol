@@ -110,12 +110,11 @@ contract Storage {
         
         user.isStored[_contract][_id] = false;
         user.storedTokens[_contract].removeElement(_id);
-        //user.timestamps[_contract][_id] = block.timestamp;
+        delete user.timestamps[_contract][_id];
         user.amountStored = 0;
 
         if (user.amountStored == 0) {
-            // clean up nested mappings first
-            // then delete the struct
+            delete owners[_user];
         }
 
         IERC721(_contract).transferFrom(address(this), _user, _id);

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-import { SameContractTwoUsers } from "./Helpers";
+import { SingleContract } from "./Helpers";
 
 describe("Happy Path", () => {
   const deploy = async () => {
@@ -61,7 +61,7 @@ describe("Happy Path", () => {
   it("Store: Single token, Multiple users, Same contract", async () => {
     const { storage, token, owner, user, user2 } = await deploy(); 
 
-    await SameContractTwoUsers(storage, token, owner, user, user2, [4], [8], 5, 10);
+    await SingleContract(true, storage, token, owner, user, user2, [4], [8], 5, 10);
 
     const userInfo = await storage.getUser(token.address, user.address, 0);
     const user2Info = await storage.getUser(token.address, user2.address, 0);
@@ -73,7 +73,7 @@ describe("Happy Path", () => {
   it("Store: Multiple tokens, Multiple users, Same contract", async () => {
     const { storage, token, owner, user, user2 } = await deploy(); 
 
-    await SameContractTwoUsers(storage, token, owner, user, user2, [0, 1], [3, 4], 2, 4);
+    await SingleContract(true, storage, token, owner, user, user2, [0, 1], [3, 4], 2, 4);
 
     const userInfo = await storage.getUser(token.address, user.address, 0);
     const user2Info = await storage.getUser(token.address, user2.address, 0);
@@ -96,4 +96,19 @@ describe("Happy Path", () => {
 
   it("Store: Multiple token, Multiple users, Multiple contracts", async () => {
   });
+
+  it("Withdraw: Single token", async () => { 
+    const { storage, token, owner, user } = await deploy();
+
+    await SingleContract(true, storage, token, owner, user, user, [0, 1], [], 2, 0);
+    
+    await storage.connect(user).withdraw(token.address, [0]);
+  });
+
+  it("Withdraw: Multiple tokens", async () => {
+    const { storage, token, owner, user } = await deploy();
+
+    await SingleContract(true, storage, token, owner, user, user, [0, 1], [], 2, 0);
+    await storage.connect(user).withdraw(token.address, [0, 1]);
+  })
 });
